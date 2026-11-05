@@ -54,3 +54,7 @@ Database URL is configured in `application.properties`.
 This project was developed for learning and demonstrating Java web development, REST APIs, database connectivity, and session-based authentication.
 
 **Note:** This is an educational ATM simulator, not a production banking application
+## Screenshots
+
+### Login Page
+![ATM Login Page](screenshots/login-page.png)
