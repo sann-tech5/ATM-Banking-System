@@ -1,0 +1,706 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ATM Banking System</title>
+
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #111827;
+            color: #f9fafb;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* LOGIN AND DASHBOARD CARDS */
+
+        .login-box {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            border: 1px solid #374151;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0, 0, 0, 0.4);
+            text-align: center;
+        }
+
+        #loginBox {
+            max-width: 440px;
+            margin: auto;
+        }
+
+        #dashboard {
+            display: none;
+            max-width: 750px;
+            width: 100%;
+            margin: 20px auto;
+            padding: 35px;
+        }
+
+        /* HEADINGS */
+
+        h2 {
+            color: #f9fafb;
+            margin-bottom: 25px;
+        }
+
+        #dashboard h3 {
+            color: #f9fafb;
+            margin-top: 25px;
+            margin-bottom: 18px;
+        }
+
+        /* INPUT FIELDS */
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #111827;
+            color: white;
+            border: 1px solid #4b5563;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        input::placeholder {
+            color: #9ca3af;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        /* BUTTONS */
+
+        button {
+            width: 100%;
+            padding: 14px;
+            margin: 10px 0;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            letter-spacing: 0.3px;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .logout-button {
+            background: #dc2626;
+        }
+
+        .logout-button:hover {
+            background: #b91c1c;
+        }
+
+        /* BALANCE CARD */
+
+        .balance-card {
+            background: linear-gradient(135deg, #1e40af, #172554);
+            color: white;
+            padding: 25px;
+            border-radius: 14px;
+            margin: 15px 0;
+            box-shadow: 0 5px 15px rgba(0, 50, 120, 0.2);
+        }
+
+        .balance-card h2,
+        .balance-card h3 {
+            color: white !important;
+        }
+
+        /* SEPARATORS */
+
+        hr {
+            border: 0;
+            border-top: 1px solid #374151;
+            margin: 28px 0;
+        }
+
+        /* MESSAGES */
+
+        .message {
+            font-size: 14px;
+            color: #d1d5db;
+        }
+
+        /* TRANSACTION TABLE */
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 14px;
+            color: white;
+        }
+
+        th, td {
+            border: 1px solid #4b5563;
+            padding: 10px;
+            white-space: nowrap;
+        }
+
+        th {
+            background: #1d4ed8;
+        }
+
+        td {
+            background: #273449;
+        }
+
+        tr:nth-child(even) td {
+            background: #1f2937;
+        }
+
+        /* FOOTER */
+
+        .app-footer {
+            margin-top: 25px;
+            padding-top: 18px;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+            font-size: 12px;
+            line-height: 1.8;
+            text-align: center;
+        }
+
+        /* RESPONSIVE DESIGN */
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .login-box {
+                padding: 20px;
+            }
+
+            #dashboard {
+                padding: 20px;
+            }
+        }
+    </style>
+
+</head>
+
+<body>
+
+<!-- LOGIN SECTION -->
+
+<div class="login-box" id="loginBox">
+
+    <h2>ATM Banking System</h2>
+
+    <input
+            type="text"
+            id="account"
+            placeholder="Enter Account Number"
+    >
+
+    <input
+            type="password"
+            id="pin"
+            placeholder="Enter PIN"
+    >
+
+    <button onclick="login()">Login</button>
+
+    <p class="message" id="message"></p>
+
+</div>
+
+
+<!-- DASHBOARD SECTION -->
+
+<div class="login-box" id="dashboard">
+
+    <h2>ATM Dashboard</h2>
+
+    <h3 id="welcome"></h3>
+
+    <!-- BALANCE -->
+
+    <div class="balance-card">
+        <h3>Available Balance</h3>
+        <h2>₹ <span id="balance">0.00</span></h2>
+    </div>
+
+
+    <!-- DEPOSIT -->
+
+    <h3>Deposit Money</h3>
+
+    <input
+            type="number"
+            id="depositAmount"
+            placeholder="Enter Amount"
+            min="0.01"
+            step="0.01"
+    >
+
+    <button onclick="depositMoney()">Deposit</button>
+
+    <p class="message" id="depositMessage"></p>
+
+    <hr>
+
+
+    <!-- WITHDRAW -->
+
+    <h3>Withdraw Money</h3>
+
+    <input
+            type="number"
+            id="withdrawAmount"
+            placeholder="Enter Amount"
+            min="0.01"
+            step="0.01"
+    >
+
+    <button onclick="withdrawMoney()">Withdraw</button>
+
+    <p class="message" id="withdrawMessage"></p>
+
+    <hr>
+
+
+    <!-- TRANSACTION HISTORY -->
+
+    <h3>Transaction History</h3>
+
+    <button onclick="loadTransactions()">
+        View Transactions
+    </button>
+
+    <div id="transactionSection" style="display:none;">
+
+        <div class="table-container">
+
+            <table>
+                <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Date & Time</th>
+                </tr>
+                </thead>
+
+                <tbody id="transactionTable"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <p class="message" id="transactionMessage"></p>
+
+    <hr>
+
+    <hr>
+
+    <!-- CHANGE PIN -->
+
+    <h3>Change ATM PIN</h3>
+
+    <input
+            type="password"
+            id="oldPin"
+            placeholder="Enter Current PIN"
+            maxlength="4"
+    >
+
+    <input
+            type="password"
+            id="newPin"
+            placeholder="Enter New 4-Digit PIN"
+            maxlength="4"
+    >
+
+    <input
+            type="password"
+            id="confirmPin"
+            placeholder="Confirm New PIN"
+            maxlength="4"
+    >
+
+    <button onclick="changePin()">Change PIN</button>
+
+    <p class="message" id="pinMessage"></p>
+
+    <hr>
+
+
+    <!-- LOGOUT -->
+
+    <button class="logout-button" onclick="logout()">
+        Logout
+    </button>
+    <footer class="app-footer">
+        ATM Banking System
+        <br>
+        Developed using Java, Spring Boot & MySQL
+    </footer>
+
+</div>
+
+
+<script>
+
+    // CURRENT LOGGED-IN ACCOUNT
+
+    let loggedInAccount = "";
+
+
+    // LOGIN FUNCTION
+
+    async function login() {
+
+        let account = document.getElementById("account").value.trim();
+        let pin = document.getElementById("pin").value;
+
+        let message = document.getElementById("message");
+
+        if (account === "" || pin === "") {
+            message.innerText = "Please enter account number and PIN";
+            return;
+        }
+
+        try {
+
+            let response = await fetch("/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    accountNumber: account,
+                    pin: pin
+                })
+            });
+
+            let result = await response.json();
+
+            if (result.success) {
+
+                loggedInAccount = account;
+
+                document.getElementById("loginBox").style.display = "none";
+
+                document.getElementById("dashboard").style.display = "block";
+
+                document.getElementById("welcome").innerText =
+                    "Welcome " + result.accountHolder;
+
+                document.getElementById("balance").innerText =
+                    result.balance;
+
+                message.innerText = "";
+
+            } else {
+
+                message.innerText = result.message;
+
+            }
+
+        } catch (error) {
+
+            message.innerText = "Server connection failed!";
+
+        }
+    }
+
+
+    // DEPOSIT FUNCTION
+
+    async function depositMoney() {
+
+        let amount = document.getElementById("depositAmount").value;
+
+        let message = document.getElementById("depositMessage");
+
+        if (!amount || Number(amount) <= 0) {
+            message.innerText = "Enter a valid amount";
+            return;
+        }
+
+        try {
+
+            let response = await fetch("/api/deposit", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    accountNumber: loggedInAccount,
+                    amount: amount
+                })
+            });
+
+            let result = await response.json();
+
+            message.innerText = result.message;
+
+            if (result.success) {
+
+                document.getElementById("balance").innerText =
+                    result.balance;
+
+                document.getElementById("depositAmount").value = "";
+
+            }
+
+        } catch (error) {
+
+            message.innerText = "Server connection failed!";
+
+        }
+    }
+
+
+    // WITHDRAW FUNCTION
+
+    async function withdrawMoney() {
+
+        let amount = document.getElementById("withdrawAmount").value;
+
+        let message = document.getElementById("withdrawMessage");
+
+        if (!amount || Number(amount) <= 0) {
+            message.innerText = "Enter a valid amount";
+            return;
+        }
+
+        try {
+
+            let response = await fetch("/api/withdraw", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    accountNumber: loggedInAccount,
+                    amount: amount
+                })
+            });
+
+            let result = await response.json();
+
+            message.innerText = result.message;
+
+            if (result.success) {
+
+                document.getElementById("balance").innerText =
+                    result.balance;
+
+                document.getElementById("withdrawAmount").value = "";
+
+            }
+
+        } catch (error) {
+
+            message.innerText = "Server connection failed!";
+
+        }
+    }
+
+
+    // TRANSACTION HISTORY FUNCTION
+
+    async function loadTransactions() {
+
+        const table = document.getElementById("transactionTable");
+        const section = document.getElementById("transactionSection");
+        const message = document.getElementById("transactionMessage");
+
+        table.innerHTML = "";
+        section.style.display = "block";
+        message.innerText = "Loading transactions...";
+
+        try {
+
+            const response = await fetch(
+                `/api/transactions/${loggedInAccount}`
+            );
+
+            if (!response.ok) {
+                throw new Error("Unable to fetch transactions");
+            }
+
+            const transactions = await response.json();
+
+            if (transactions.length === 0) {
+
+                message.innerText = "No transactions found.";
+                return;
+
+            }
+
+            message.innerText = "";
+
+            transactions.forEach(transaction => {
+
+                const row = document.createElement("tr");
+
+                const values = [
+                    transaction.transactionType,
+                    "₹" + transaction.amount,
+                    transaction.balanceAfter == null
+                        ? "Not available"
+                        : "₹" + transaction.balanceAfter,
+                    transaction.transactionDate
+                        ? transaction.transactionDate.replace("T", " ")
+                        : "Not available"
+                ];
+
+                values.forEach(value => {
+
+                    const cell = document.createElement("td");
+
+                    cell.textContent = value;
+
+                    row.appendChild(cell);
+
+                });
+
+                table.appendChild(row);
+
+            });
+
+        } catch (error) {
+
+            message.innerText = "Unable to load transaction history.";
+
+        }
+    }
+
+     // CHANGE PIN FUNCTION
+
+async function changePin() {
+
+    const oldPin = document.getElementById("oldPin").value;
+    const newPin = document.getElementById("newPin").value;
+    const confirmPin = document.getElementById("confirmPin").value;
+
+    const message = document.getElementById("pinMessage");
+
+    if (!oldPin || !newPin || !confirmPin) {
+        message.innerText = "Please fill all fields";
+        return;
+    }
+
+    if (!/^\d{4}$/.test(newPin)) {
+        message.innerText = "New PIN must contain 4 digits";
+        return;
+    }
+
+    if (newPin !== confirmPin) {
+        message.innerText = "New PIN and Confirm PIN do not match";
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/change-pin", {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                accountNumber: loggedInAccount,
+                oldPin: oldPin,
+                newPin: newPin
+            })
+        });
+
+        const result = await response.json();
+
+        message.innerText = result.message;
+
+        if (result.success) {
+            document.getElementById("oldPin").value = "";
+            document.getElementById("newPin").value = "";
+            document.getElementById("confirmPin").value = "";
+        }
+
+    } catch (error) {
+
+        message.innerText = "Server connection failed!";
+
+    }
+}
+    // LOGOUT FUNCTION
+
+   async function logout() {
+
+    try {
+        const response = await fetch("/api/logout", {
+            method: "POST"
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+            alert("Logout failed");
+            return;
+        }
+
+        // Clear frontend data
+        loggedInAccount = "";
+
+        document.getElementById("dashboard").style.display = "none";
+        document.getElementById("loginBox").style.display = "block";
+
+        document.getElementById("account").value = "";
+        document.getElementById("pin").value = "";
+
+        document.getElementById("message").innerText = "";
+        document.getElementById("depositMessage").innerText = "";
+        document.getElementById("withdrawMessage").innerText = "";
+        document.getElementById("transactionMessage").innerText = "";
+
+        document.getElementById("depositAmount").value = "";
+        document.getElementById("withdrawAmount").value = "";
+
+        document.getElementById("transactionTable").innerHTML = "";
+        document.getElementById("transactionSection").style.display = "none";
+
+    } catch (error) {
+        alert("Unable to logout. Please try again.");
+    }
+}
+
+</script>
+
+</body>
+</html>
+
